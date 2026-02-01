@@ -17,6 +17,9 @@ public class Player {
     
     private boolean faceRight = true;
 
+    private float width = 128;
+    private float height = 128;
+
     public Player(Texture sheet, float x, float y) {
         this.position = new Vector2(x, y);
         this.speed = 100f;
@@ -52,9 +55,6 @@ public class Player {
     public void draw(SpriteBatch batch) {
         TextureRegion frame = currentAnim.getKeyFrame(stateTime, true);
 
-        float width = 128; // Dimensione a schermo
-        float height = 128;
-
         // Calcolo per il flip senza modificare l'asset originale
         float drawX = faceRight ? position.x : position.x + width;
         float drawWidth = faceRight ? width : -width;
@@ -62,6 +62,10 @@ public class Player {
         batch.draw(frame, drawX, position.y, drawWidth, height);
     }
 
-    // Getter per la posizione (ci servirà per la telecamera!)
+    // Getter per la posizione
     public Vector2 getPosition() { return position; }
+
+    // Getter per dimensioni
+    public float getWidth() { return width; }
+    public float getHeight() { return height; }
 }

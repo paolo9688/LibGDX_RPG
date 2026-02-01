@@ -12,6 +12,7 @@ public class MysticRPG extends ApplicationAdapter {
     private Texture playerSheet;
     private Player player;
     private InputHandler inputHandler;
+    private GameCamera gameCamera;
 
     @Override
     public void create() {
@@ -19,21 +20,30 @@ public class MysticRPG extends ApplicationAdapter {
         playerSheet = new Texture("Cute_Fantasy_Free/Player/Player.png");
         player = new Player(playerSheet, 100, 100);
         inputHandler = new InputHandler();
+        gameCamera = new GameCamera(800, 600);
     }
 
     @Override
     public void render() {
         // 1. Logica di Gioco (Update)
         inputHandler.update(); 
-        
-        player.update(Gdx.graphics.getDeltaTime(), inputHandler); 
-        
+        player.update(Gdx.graphics.getDeltaTime(), inputHandler);
+        gameCamera.update(player.getPosition(), player.getWidth(), player.getHeight());
+
         // 2. Pulizia dello schermo e disegno (Render)
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+
+        // 3. Applichiamo la telecamera al batch
+        gameCamera.applyTo(batch);
         
         batch.begin();
         player.draw(batch);
         batch.end();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        gameCamera.resize(width, height);
     }
 
     @Override
