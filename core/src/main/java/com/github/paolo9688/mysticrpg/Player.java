@@ -56,10 +56,11 @@ public class Player {
         TextureRegion frame = currentAnim.getKeyFrame(stateTime, true);
 
         // Calcolo per il flip senza modificare l'asset originale
-        float drawX = faceRight ? position.x : position.x + width;
+        int drawX = Math.round(faceRight ? position.x : position.x + width);
+        int drawY = Math.round(position.y);
         float drawWidth = faceRight ? width : -width;
 
-        batch.draw(frame, drawX, position.y, drawWidth, height);
+        batch.draw(frame, drawX, drawY, drawWidth, height);
     }
 
     // Getter per la posizione
