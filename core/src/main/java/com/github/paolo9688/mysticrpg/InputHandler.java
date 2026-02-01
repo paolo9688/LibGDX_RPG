@@ -7,6 +7,7 @@ import com.badlogic.gdx.controllers.Controllers;
 
 public class InputHandler {
     private float moveX, moveY;
+    private final float DEADZONE = 0.2f;
 
     public void update() {
         moveX = 0;
@@ -22,13 +23,21 @@ public class InputHandler {
         if (Controllers.getControllers().size > 0) {
             Controller controller = Controllers.getControllers().first();
             
-            // Levetta sinistra (Solitamente asse 0 e 1)
-            float deadzone = 0.2f; // Per evitare movimenti fantasma se la levetta è usurata
+            // LEVETTA ANALOGICA (Asse)
             float stickX = controller.getAxis(controller.getMapping().axisLeftX);
-            float stickY = -controller.getAxis(controller.getMapping().axisLeftY); // Invertito nell'asse Y
+            float stickY = -controller.getAxis(controller.getMapping().axisLeftY);
 
-            if (Math.abs(stickX) > deadzone) moveX = stickX;
-            if (Math.abs(stickY) > deadzone) moveY = stickY;
+            if (Math.abs(stickX) > DEADZONE) moveX = stickX;
+            if (Math.abs(stickY) > DEADZONE) moveY = stickY;
+
+            // D-PAD (Pulsanti)
+            // Se non stiamo già muovendo la levetta, controlliamo le frecce
+            if (moveX == 0 && moveY == 0) {
+                if (controller.getButton(controller.getMapping().buttonDpadUp)) moveY = 1;
+                if (controller.getButton(controller.getMapping().buttonDpadDown)) moveY = -1;
+                if (controller.getButton(controller.getMapping().buttonDpadLeft)) moveX = -1;
+                if (controller.getButton(controller.getMapping().buttonDpadRight)) moveX = 1;
+            }
         }
     }
 
