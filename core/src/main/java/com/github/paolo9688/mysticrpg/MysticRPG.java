@@ -10,25 +10,20 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class MysticRPG extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture playerSheet;
-    private Texture grassTex;
-    private Texture waterTex;
     private Player player;
     private InputHandler inputHandler;
     private GameCamera gameCamera;
-    private WorldMap worldMap;
+    private MapManager mapManager;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         playerSheet = new Texture("Cute_Fantasy_Free/Player/Player.png");
-        grassTex = new Texture("Cute_Fantasy_Free/Tiles/Grass_Middle.png");
-        waterTex = new Texture("Cute_Fantasy_Free/Tiles/Water_Middle.png");
-        grassTex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-        waterTex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        String path = "Cute_Fantasy_Free/Maps/test.tmx";
+        mapManager = new MapManager(path);
         player = new Player(playerSheet, 100, 100);
         inputHandler = new InputHandler();
         gameCamera = new GameCamera(800, 600);
-        worldMap = new WorldMap(grassTex, waterTex);
     }
 
     @Override
@@ -41,11 +36,12 @@ public class MysticRPG extends ApplicationAdapter {
         // 2. Pulizia dello schermo e disegno (Render)
         ScreenUtils.clear(0, 0, 0, 1);
 
-        // 3. Applichiamo la telecamera al batch
-        gameCamera.applyTo(batch);
-        
+        // 3. Disegniamo la mappa
+        mapManager.render(gameCamera.getCamera());
+
+        // 4. Applichiamo la telecamera al batch
+        gameCamera.applyTo(batch); // Assicura che il batch segua la camera
         batch.begin();
-        worldMap.draw(batch, player.getPosition().x, player.getPosition().y);
         player.draw(batch);
         batch.end();
     }
@@ -59,7 +55,5 @@ public class MysticRPG extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         playerSheet.dispose();
-        grassTex.dispose();
-        waterTex.dispose();
     }
 }
