@@ -27,7 +27,7 @@ public class MysticRPG extends ApplicationAdapter {
         mapManager = new MapManager(path);
         player = new Player(playerSheet, 100, 100);
         inputHandler = new InputHandler();
-        gameCamera = new GameCamera(2560, 1440); // Dimensione del mondo (adatta alla tua mappa)
+        gameCamera = new GameCamera(1920, 1080); // Dimensione del mondo (adatta alla tua mappa)
         shapeRenderer = new ShapeRenderer();
     }
 

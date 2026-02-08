@@ -55,6 +55,10 @@
 </data>
  </layer>
  <objectgroup id="3" name="Collisioni">
-  <object id="1" x="384" y="80" width="16" height="16"/>
+  <object id="1" x="384" y="80" width="16" height="16">
+   <properties>
+    <property name="tipo" value="cassa"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>
