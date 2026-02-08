@@ -27,7 +27,7 @@ public class Player {
         this.collision = new CollisionComponent(width, height);
     }
 
-    public void update(float dt, InputHandler input, Array<Rectangle> obstacles) {
+    public void update(float dt, InputHandler input, Array<WorldObject> obstacles) {
         float moveX = input.getMoveX();
         float moveY = input.getMoveY();
 
@@ -46,7 +46,7 @@ public class Player {
         else if (moveX < 0) faceRight = false;
     }
 
-    private void handleMovement(float dt, float moveX, float moveY, Array<Rectangle> obstacles) {
+    private void handleMovement(float dt, float moveX, float moveY, Array<WorldObject> obstacles) {
         if (moveX != 0 || moveY != 0) {
             float nextX = position.x + moveX * speed * dt;
             if (!collision.check(nextX, position.y, obstacles)) position.x = nextX;
@@ -56,10 +56,31 @@ public class Player {
         }
     }
 
+    public Rectangle getInteractionRange() {
+        float rangeSize = 40f; // Quanto lontano può arrivare il braccio del player
+
+        // Partiamo dal centro del player e poi spostiamo il rettangolo in avanti rispetto alla direzione in cui guarda
+        float x = position.x + (width - rangeSize) / 2f;
+        float y = position.y + (height - rangeSize) / 2f;
+
+        // Chiediamo al componente in che direzione siamo rivolti
+        AnimationComponent.Direction dir = animator.getLastDirection();
+
+        if (dir == AnimationComponent.Direction.UP) {
+            y += 45f;
+        } else if (dir == AnimationComponent.Direction.DOWN) {
+            y -= 45f;
+        } else {
+            if (faceRight) x += 45f;
+            else x -= 45f;
+        }
+
+        return new Rectangle(x, y, rangeSize, rangeSize);
+    }
+
     public void draw(SpriteBatch batch) {
         TextureRegion frame = animator.getCurrentFrame();
 
-        // Calcolo per il flip senza modificare l'asset originale
         int drawX = Math.round(faceRight ? position.x : position.x + width);
         int drawY = Math.round(position.y);
         float drawWidth = faceRight ? width : -width;
@@ -68,9 +89,7 @@ public class Player {
     }
 
     // Metodo helper per il debug nel Main
-    public Rectangle getHitbox() {
-        return collision.getBounds(position.x, position.y);
-    }
+    public Rectangle getHitbox() { return collision.getBounds(position.x, position.y);}
 
     // Getter per la posizione
     public Vector2 getPosition() { return position; }

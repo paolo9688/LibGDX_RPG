@@ -8,16 +8,23 @@ import com.badlogic.gdx.controllers.Controllers;
 public class InputHandler {
     private float moveX, moveY;
     private final float DEADZONE = 0.2f;
+    private boolean interactJustPressed;
 
     public void update() {
         moveX = 0;
         moveY = 0;
+        interactJustPressed = false;
 
-        // 1. Gestione Tastiera
+        // 1a. Gestione Tastiera - Movimento
         if (Gdx.input.isKeyPressed(Input.Keys.W)) moveY = 1;
         if (Gdx.input.isKeyPressed(Input.Keys.S)) moveY = -1;
         if (Gdx.input.isKeyPressed(Input.Keys.A)) moveX = -1;
         if (Gdx.input.isKeyPressed(Input.Keys.D)) moveX = 1;
+
+        // 1b. Gestione Tastiera - Interazione
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            interactJustPressed = true;
+        }
 
         // 2. Gestione Controller (se connesso)
         if (Controllers.getControllers().size > 0) {
@@ -38,10 +45,20 @@ public class InputHandler {
                 if (controller.getButton(controller.getMapping().buttonDpadLeft)) moveX = -1;
                 if (controller.getButton(controller.getMapping().buttonDpadRight)) moveX = 1;
             }
+
+            // Pulsante Interazione Controller (Solitamente A su Xbox o X su PS)
+            // Nota: libGDX non ha un "isButtonJustPressed" nativo perfetto per tutti i controller,
+            // ma per ora usiamo questo approccio semplice.
+            if (controller.getButton(controller.getMapping().buttonA)) {
+                // Per evitare ripetizioni eccessive col controller, 
+                // si potrebbe implementare un piccolo timer, ma iniziamo così.
+                interactJustPressed = true; 
+            }
         }
     }
 
     public float getMoveX() { return moveX; }
     public float getMoveY() { return moveY; }
     public boolean isMoving() { return moveX != 0 || moveY != 0; }
+    public boolean isInteractJustPressed() { return interactJustPressed; }
 }

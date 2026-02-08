@@ -2,6 +2,7 @@ package com.github.paolo9688.mysticrpg.Components;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import com.github.paolo9688.mysticrpg.WorldObject;
 
 public class CollisionComponent {
     private float width, height;
@@ -24,11 +25,11 @@ public class CollisionComponent {
     /**
      * Controlla se una data posizione collide con gli ostacoli del mondo
      */
-    public boolean check(float x, float y, Array<Rectangle> obstacles) {
+    public boolean check(float x, float y, Array<WorldObject> objects) {
         Rectangle bounds = new Rectangle(x + offsetX, y + offsetY, collisionWidth, collisionHeight);
         
-        for (Rectangle rect : obstacles) {
-            if (bounds.overlaps(rect)) return true;
+        for (WorldObject obj : objects) {
+            if (bounds.overlaps(obj.bounds)) return true;
         }
         return false;
     }

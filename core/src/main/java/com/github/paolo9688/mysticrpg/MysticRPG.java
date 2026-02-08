@@ -35,9 +35,36 @@ public class MysticRPG extends ApplicationAdapter {
     public void render() {
         // 1. Logica di Gioco (Update)
         inputHandler.update();
-        
-        // Passa anche le collisioni al player
-        player.update(Gdx.graphics.getDeltaTime(), inputHandler, mapManager.getCollisionRects());
+
+        // Passa input e ostacoli al player per aggiornare posizione e animazione
+        player.update(Gdx.graphics.getDeltaTime(), inputHandler, mapManager.getWorldObjects());
+
+        // Gestione dell'interazione quando il tasto è appena stato premuto
+        if (inputHandler.isInteractJustPressed()) {
+            Rectangle iRange = player.getInteractionRange();
+            boolean oggettoTrovato = false;
+            
+            for (WorldObject obj : mapManager.getWorldObjects()) {
+                if (iRange.overlaps(obj.bounds)) {
+                    oggettoTrovato = true;
+
+                    if ("cassa".equals(obj.type)) {
+                        System.out.println("HAI APERTO UNA CASSA!");
+                    } else {
+                        System.out.println("Questo è solo un muro...");
+                    }
+                    break; // Fermati al primo oggetto trovato
+
+                    // else if ("cartello".equals(obj.type)) { ... }
+                    // else if ("trappola".equals(obj.type)) { ... }
+                }
+            }
+
+            // Se dopo aver controllato tutti gli oggetti non ne abbiamo trovato nessuno...
+            if (!oggettoTrovato) {
+                System.out.println("Qui non c'è nulla con cui interagire.");
+            }
+        }
 
         // Aggiorna la telecamera per seguire il player
         gameCamera.update(player.getPosition(), player.getWidth(), player.getHeight());
@@ -59,8 +86,9 @@ public class MysticRPG extends ApplicationAdapter {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line); // "Line" per vedere solo i bordi
         shapeRenderer.setColor(Color.RED);
 
-        for (Rectangle rect : mapManager.getCollisionRects()) {
-            shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+        for (WorldObject obj : mapManager.getWorldObjects()) {
+            // Usiamo obj.bounds per disegnare il rettangolo rosso
+            shapeRenderer.rect(obj.bounds.x, obj.bounds.y, obj.bounds.width, obj.bounds.height);
         }
         
         // Disegniamo anche la collisione ai piedi del player per vedere se combacia!
@@ -76,6 +104,11 @@ public class MysticRPG extends ApplicationAdapter {
             collisionHeight
         );
 
+        // Disegniamo anche l'area di interazione del player in giallo per debug
+        shapeRenderer.setColor(Color.YELLOW);
+        Rectangle iRange = player.getInteractionRange();
+        shapeRenderer.rect(iRange.x, iRange.y, iRange.width, iRange.height);
+
         shapeRenderer.end();
     }
 
@@ -89,6 +122,6 @@ public class MysticRPG extends ApplicationAdapter {
         batch.dispose();
         playerSheet.dispose();
         shapeRenderer.dispose();
-        mapManager.dispose(); // Assicurati di chiamare dispose anche per il MapManager
+        mapManager.dispose();
     }
 }

@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.Array;
 public class MapManager {
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
-    private Array<Rectangle> collisionRects = new Array<>();
+    private Array<WorldObject> worldObjects = new Array<>();
     private float scale = 4f; // Scala per ingrandire i tile
 
     public MapManager(String path) {
@@ -43,27 +43,32 @@ public class MapManager {
     }
 
     public void loadCollisions() {
-        collisionRects.clear();
+        worldObjects.clear();
         MapLayer layer = map.getLayers().get("Collisioni"); // Deve avere lo stesso nome che hai dato in Tiled
         if (layer != null) {
             for (MapObject object : layer.getObjects()) {
                 if (object instanceof RectangleMapObject) {
                     Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+                    // Leggiamo la proprietà "tipo" da Tiled
+                    String tipo = object.getProperties().get("tipo", String.class);
                     
                     // Applichiamo la scala per ingrandire le collisioni
-                    collisionRects.add(new Rectangle(
+                    Rectangle scaledRect = new Rectangle(
                         rect.x * scale, 
                         rect.y * scale, 
                         rect.width * scale, 
                         rect.height * scale
-                    ));
+                    );
+
+                    worldObjects.add(new WorldObject(scaledRect, tipo));
                 }
             }
         }
     }
 
-    public Array<Rectangle> getCollisionRects() {
-        return collisionRects;
+    public Array<WorldObject> getWorldObjects() {
+        return worldObjects;
     }
 
     public void render(OrthographicCamera camera) {

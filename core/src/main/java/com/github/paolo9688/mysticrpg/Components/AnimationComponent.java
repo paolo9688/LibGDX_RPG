@@ -10,6 +10,9 @@ public class AnimationComponent {
     private Animation<TextureRegion> walkDown, walkUp, walkHorizontal;
     private Animation<TextureRegion> currentAnim;
 
+    public enum Direction { UP, DOWN, HORIZONTAL }
+    private Direction lastDirection = Direction.DOWN;
+
     public AnimationComponent(Texture sheet, float frameDuration) {
         this.stateTime = 0f;
         TextureRegion[][] tmp = TextureRegion.split(sheet, 32, 32);
@@ -28,17 +31,27 @@ public class AnimationComponent {
         stateTime += dt;
 
         if (isMoving) {
-            if (moveX != 0) currentAnim = walkHorizontal;
-            else if (moveY > 0) currentAnim = walkUp;
-            else if (moveY < 0) currentAnim = walkDown;
+            if (moveX != 0) {
+                currentAnim = walkHorizontal;
+                lastDirection = Direction.HORIZONTAL;
+            } else if (moveY > 0) {
+                currentAnim = walkUp;
+                lastDirection = Direction.UP;
+            } else if (moveY < 0) {
+                currentAnim = walkDown;
+                lastDirection = Direction.DOWN;
+            }
         } else {
-            if (currentAnim == walkHorizontal) currentAnim = idleHorizontal;
-            else if (currentAnim == walkUp) currentAnim = idleUp;
-            else if (currentAnim == walkDown) currentAnim = idleDown;
+            // Usa lastDirection per scegliere l'idle corretta quando ci si ferma
+            if (lastDirection == Direction.HORIZONTAL) currentAnim = idleHorizontal;
+            else if (lastDirection == Direction.UP) currentAnim = idleUp;
+            else if (lastDirection == Direction.DOWN) currentAnim = idleDown;
         }
     }
 
-    public TextureRegion getCurrentFrame() {
-        return currentAnim.getKeyFrame(stateTime, true);
-    }
+    // Getter per la direzione dell'ultima animazione
+    public Direction getLastDirection() { return lastDirection;}
+
+    // Getter per il frame corrente da disegnare
+    public TextureRegion getCurrentFrame() { return currentAnim.getKeyFrame(stateTime, true); }
 }
