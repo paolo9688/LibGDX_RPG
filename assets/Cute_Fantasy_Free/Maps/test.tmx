@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="2">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="4">
  <tileset firstgid="1" name="Grass_Middle" tilewidth="16" tileheight="16" tilecount="1" columns="1">
   <image source="../Tiles/Grass_Middle.png" width="16" height="16"/>
  </tileset>
  <tileset firstgid="2" name="Chest" tilewidth="16" tileheight="16" tilecount="1" columns="1">
   <image source="../Outdoor_decoration/Chest.png" width="16" height="16"/>
+ </tileset>
+ <tileset firstgid="3" name="Outdoor_Decor_Free" tilewidth="16" tileheight="16" tilecount="84" columns="7">
+  <image source="../Outdoor_decoration/Outdoor_Decor_Free.png" width="112" height="192"/>
  </tileset>
  <layer id="1" name="Livello tile 1" width="30" height="20">
   <data encoding="csv">
@@ -37,7 +40,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,2,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -58,6 +61,12 @@
   <object id="1" x="384" y="80" width="16" height="16">
    <properties>
     <property name="tipo" value="cassa"/>
+   </properties>
+  </object>
+  <object id="3" x="336" y="80" width="16" height="16">
+   <properties>
+    <property name="testo" value="Apri la cassa a destra!"/>
+    <property name="tipo" value="cartello"/>
    </properties>
   </object>
  </objectgroup>

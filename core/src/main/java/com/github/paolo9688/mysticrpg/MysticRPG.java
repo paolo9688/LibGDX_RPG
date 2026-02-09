@@ -18,6 +18,9 @@ public class MysticRPG extends ApplicationAdapter {
     private GameCamera gameCamera;
     private MapManager mapManager;
     private ShapeRenderer shapeRenderer;
+    private DialogManager dialogManager;
+    private float worldWidth = 1280; // Dimensione del mondo (adatta alla tua mappa)
+    private float worldHeight = 720; // Dimensione del mondo (adatta alla tua mappa)
 
     @Override
     public void create() {
@@ -27,8 +30,9 @@ public class MysticRPG extends ApplicationAdapter {
         mapManager = new MapManager(path);
         player = new Player(playerSheet, 100, 100);
         inputHandler = new InputHandler();
-        gameCamera = new GameCamera(1920, 1080); // Dimensione del mondo (adatta alla tua mappa)
+        gameCamera = new GameCamera(worldWidth, worldHeight); // Dimensione del mondo (adatta alla tua mappa)
         shapeRenderer = new ShapeRenderer();
+        dialogManager = new DialogManager();
     }
 
     @Override
@@ -49,22 +53,25 @@ public class MysticRPG extends ApplicationAdapter {
                     oggettoTrovato = true;
 
                     if ("cassa".equals(obj.type)) {
-                        System.out.println("HAI APERTO UNA CASSA!");
-                    } else {
-                        System.out.println("Questo è solo un muro...");
+                        dialogManager.showMessage("Hai aperto una cassa!", 3f);
+                    }
+                    else if ("cartello".equals(obj.type)) {
+                        // Leggiamo la proprietà personalizzata "testo" che abbiamo messo in Tiled
+                        // Nota: dobbiamo aver salvato le proprietà nel WorldObject
+                        dialogManager.showMessage(obj.customMessage, 4f);
                     }
                     break; // Fermati al primo oggetto trovato
-
-                    // else if ("cartello".equals(obj.type)) { ... }
-                    // else if ("trappola".equals(obj.type)) { ... }
                 }
             }
 
             // Se dopo aver controllato tutti gli oggetti non ne abbiamo trovato nessuno...
             if (!oggettoTrovato) {
-                System.out.println("Qui non c'è nulla con cui interagire.");
+                dialogManager.showMessage("Non c'è nulla con cui interagire.", 2f);
             }
         }
+
+        // Aggiorna il dialogo (per gestire il timer di visualizzazione)
+        dialogManager.update(Gdx.graphics.getDeltaTime());
 
         // Aggiorna la telecamera per seguire il player
         gameCamera.update(player.getPosition(), player.getWidth(), player.getHeight());
@@ -80,6 +87,8 @@ public class MysticRPG extends ApplicationAdapter {
         batch.begin();
         player.draw(batch);
         batch.end();
+
+        dialogManager.draw(batch, shapeRenderer, worldWidth, worldHeight);
 
         // 5. Debug: disegna le collisioni
         shapeRenderer.setProjectionMatrix(gameCamera.getCamera().combined);
@@ -123,5 +132,6 @@ public class MysticRPG extends ApplicationAdapter {
         playerSheet.dispose();
         shapeRenderer.dispose();
         mapManager.dispose();
+        dialogManager.dispose();
     }
 }

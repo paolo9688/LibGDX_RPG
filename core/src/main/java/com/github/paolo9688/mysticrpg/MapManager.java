@@ -52,6 +52,9 @@ public class MapManager {
 
                     // Leggiamo la proprietà "tipo" da Tiled
                     String tipo = object.getProperties().get("tipo", String.class);
+
+                    // Leggiamo la proprietà "testo" da Tiled (per i cartelli)
+                    String messaggio = object.getProperties().get("testo", String.class);
                     
                     // Applichiamo la scala per ingrandire le collisioni
                     Rectangle scaledRect = new Rectangle(
@@ -61,7 +64,7 @@ public class MapManager {
                         rect.height * scale
                     );
 
-                    worldObjects.add(new WorldObject(scaledRect, tipo));
+                    worldObjects.add(new WorldObject(scaledRect, tipo, messaggio));
                 }
             }
         }
