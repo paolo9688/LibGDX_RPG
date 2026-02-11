@@ -75,6 +75,7 @@ public class MapManager {
 
     public void render(OrthographicCamera camera) {
         renderer.setView(camera);
+        renderer.getBatch().setProjectionMatrix(camera.combined);
         renderer.render();
     }
 

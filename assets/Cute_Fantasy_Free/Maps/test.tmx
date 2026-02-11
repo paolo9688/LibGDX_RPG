@@ -58,12 +58,12 @@
 </data>
  </layer>
  <objectgroup id="3" name="Collisioni">
-  <object id="1" x="384" y="80" width="16" height="16">
+  <object id="1" x="384" y="88" width="16" height="16">
    <properties>
     <property name="tipo" value="cassa"/>
    </properties>
   </object>
-  <object id="3" x="336" y="80" width="16" height="16">
+  <object id="3" x="336" y="88" width="16" height="16">
    <properties>
     <property name="testo" value="Apri la cassa a destra!"/>
     <property name="tipo" value="cartello"/>

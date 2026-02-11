@@ -22,7 +22,7 @@ public class MysticRPG extends ApplicationAdapter {
     private float worldWidth = 1280; // Dimensione del mondo (adatta alla tua mappa)
     private float worldHeight = 720; // Dimensione del mondo (adatta alla tua mappa)
 
-    // Dimensioni "virtuali" (quelle del GameBoy/NES per intenderci)
+    // Dimensioni "virtuali" per la telecamera (puoi regolarle a seconda di quanto vuoi zoomare)
     private float virtualWidth = 320; 
     private float virtualHeight = 180;
 
@@ -114,14 +114,8 @@ public class MysticRPG extends ApplicationAdapter {
         // Disegniamo anche la collisione ai piedi del player per vedere se combacia!
         // (Usa le stesse proporzioni che abbiamo messo nella classe Player)
         shapeRenderer.setColor(Color.GREEN);
-        float collisionWidth = player.getWidth() * 0.4f;
-        float collisionHeight = player.getHeight() * 0.2f;
-        shapeRenderer.rect(
-            player.getPosition().x + (player.getWidth() - collisionWidth) / 2, 
-            player.getPosition().y, 
-            collisionWidth, 
-            collisionHeight
-        );
+        Rectangle hitbox = player.getHitbox();
+        shapeRenderer.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
 
         // Disegniamo anche l'area di interazione del player in giallo per debug
         shapeRenderer.setColor(Color.YELLOW);

@@ -74,8 +74,8 @@ public class Player {
     public void draw(SpriteBatch batch) {
         TextureRegion frame = animator.getCurrentFrame();
 
-        int drawX = Math.round(faceRight ? position.x : position.x + width);
-        int drawY = Math.round(position.y);
+        float drawX = faceRight ? position.x : position.x + width;
+        float drawY = position.y;
         float drawWidth = faceRight ? width : -width;
 
         batch.draw(frame, drawX, drawY, drawWidth, height);

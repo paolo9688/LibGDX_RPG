@@ -3,14 +3,12 @@ package com.github.paolo9688.mysticrpg;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class GameCamera {
     private OrthographicCamera camera;
     private Viewport viewport;
-    private float lerp = 0.1f; // Intensità della morbidezza (0.1f = molto fluida, 1.0f = istantanea)
 
     public GameCamera(float width, float height) {
         camera = new OrthographicCamera();
@@ -20,17 +18,11 @@ public class GameCamera {
     }
 
     public void update(Vector2 targetPosition, float targetWidth, float targetHeight) {
-        // Calcolo della posizione "morbida"
-        Vector3 position = camera.position;
-
-        // Target centrato sul giocatore
-        float targetX = targetPosition.x + targetWidth / 2;
-        float targetY = targetPosition.y + targetHeight / 2;
-        
-        // Target x, y (aggiungiamo un offset se vogliamo centrare meglio lo sprite)
-        position.x += (targetX - position.x) * lerp;
-        position.y += (targetY - position.y) * lerp;
-
+        camera.position.set(
+            targetPosition.x + targetWidth / 2f,
+            targetPosition.y + targetHeight / 2f,
+            0
+        );
         camera.update();
     }
 
