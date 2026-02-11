@@ -8,23 +8,26 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.github.paolo9688.mysticrpg.Components.AnimationComponent;
 import com.github.paolo9688.mysticrpg.Components.CollisionComponent;
+import com.github.paolo9688.mysticrpg.Components.MovementComponent;
 
 public class Player {
     private Vector2 position;
-    private float speed = 150f; // Velocità di movimento in pixel al secondo
+    private float speed = 60f; // Velocità di movimento in pixel al secondo
     private boolean faceRight = true;
 
     // Componenti per animazione e collisione
     private AnimationComponent animator;
     private CollisionComponent collision;
+    private MovementComponent movement;
 
-    private float width = 128; // Dimensioni del disegno (8 frame * 32 pixel)
-    private float height = 128; // Dimensioni del disegno (8 frame * 32 pixel)
+    private float width = 32f;
+    private float height = 32f;
 
     public Player(Texture sheet, float x, float y) {
         this.position = new Vector2(x, y);
         this.animator = new AnimationComponent(sheet, 0.15f);
         this.collision = new CollisionComponent(width, height);
+        this.movement = new MovementComponent(position, speed, collision);
     }
 
     public void update(float dt, InputHandler input, Array<WorldObject> obstacles) {
@@ -35,9 +38,9 @@ public class Player {
         animator.update(dt, moveX, moveY, moveX != 0 || moveY != 0);
 
         // 2. Gestisci il movimento e le collisioni
-        handleMovement(dt, moveX, moveY, obstacles);
+        movement.update(dt, moveX, moveY, obstacles);
 
-        // 3. Aggiorna la direzione del voltoa seconda del movimento orizzontale
+        // 3. Aggiorna la direzione del volto a seconda del movimento orizzontale
         lookAt(moveX);
     }
 
@@ -46,18 +49,8 @@ public class Player {
         else if (moveX < 0) faceRight = false;
     }
 
-    private void handleMovement(float dt, float moveX, float moveY, Array<WorldObject> obstacles) {
-        if (moveX != 0 || moveY != 0) {
-            float nextX = position.x + moveX * speed * dt;
-            if (!collision.check(nextX, position.y, obstacles)) position.x = nextX;
-
-            float nextY = position.y + moveY * speed * dt;
-            if (!collision.check(position.x, nextY, obstacles)) position.y = nextY;
-        }
-    }
-
     public Rectangle getInteractionRange() {
-        float rangeSize = 40f; // Quanto lontano può arrivare il braccio del player
+        float rangeSize = 16f; // Quanto lontano può arrivare il braccio del player
 
         // Partiamo dal centro del player e poi spostiamo il rettangolo in avanti rispetto alla direzione in cui guarda
         float x = position.x + (width - rangeSize) / 2f;
@@ -67,12 +60,12 @@ public class Player {
         AnimationComponent.Direction dir = animator.getLastDirection();
 
         if (dir == AnimationComponent.Direction.UP) {
-            y += 45f;
+            y += 20f;
         } else if (dir == AnimationComponent.Direction.DOWN) {
-            y -= 45f;
+            y -= 20f;
         } else {
-            if (faceRight) x += 45f;
-            else x -= 45f;
+            if (faceRight) x += 20f;
+            else x -= 20f;
         }
 
         return new Rectangle(x, y, rangeSize, rangeSize);

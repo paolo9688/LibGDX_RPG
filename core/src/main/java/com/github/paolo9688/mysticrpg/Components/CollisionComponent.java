@@ -19,7 +19,7 @@ public class CollisionComponent {
         
         // Calcoliamo l'offset per centrare la hitbox alla base dello sprite
         this.offsetX = (width - collisionWidth) / 2f;
-        this.offsetY = 27f; // L'offset che avevamo trovato prima
+        this.offsetY = 0; // L'offset che avevamo trovato prima
     }
 
     /**

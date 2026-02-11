@@ -30,6 +30,7 @@ public class GameCamera {
         // Target x, y (aggiungiamo un offset se vogliamo centrare meglio lo sprite)
         position.x += (targetX - position.x) * lerp;
         position.y += (targetY - position.y) * lerp;
+
         camera.update();
     }
 

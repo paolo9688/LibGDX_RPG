@@ -17,7 +17,7 @@ public class MapManager {
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
     private Array<WorldObject> worldObjects = new Array<>();
-    private float scale = 4f; // Scala per ingrandire i tile
+    private float scale = 1f; // Scala per ingrandire i tile
 
     public MapManager(String path) {
         // Carica il file .tmx
@@ -32,8 +32,7 @@ public class MapManager {
             // Il modo più diretto in libGDX per accedere alle texture caricate è questo:
             for (TiledMapTile tile : tileset) {
                 if (tile.getTextureRegion() != null) {
-                    Texture tex = tile.getTextureRegion().getTexture();
-                    tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+                    tile.getTextureRegion().getTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
                 }
             }
         }

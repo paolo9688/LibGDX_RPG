@@ -22,52 +22,63 @@ public class MysticRPG extends ApplicationAdapter {
     private float worldWidth = 1280; // Dimensione del mondo (adatta alla tua mappa)
     private float worldHeight = 720; // Dimensione del mondo (adatta alla tua mappa)
 
+    // Dimensioni "virtuali" (quelle del GameBoy/NES per intenderci)
+    private float virtualWidth = 320; 
+    private float virtualHeight = 180;
+
+    private float accumulator = 0f;
+    private final float TIME_STEP = 1/60f;
+
     @Override
     public void create() {
+        Gdx.graphics.setVSync(true);
         batch = new SpriteBatch();
         playerSheet = new Texture("Cute_Fantasy_Free/Player/Player.png");
+        playerSheet.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         String path = "Cute_Fantasy_Free/Maps/test.tmx";
         mapManager = new MapManager(path);
-        player = new Player(playerSheet, 100, 100);
+        player = new Player(playerSheet, 100, 100); // Dimensioni 1:1
         inputHandler = new InputHandler();
-        gameCamera = new GameCamera(worldWidth, worldHeight); // Dimensione del mondo (adatta alla tua mappa)
+        gameCamera = new GameCamera(virtualWidth, virtualHeight);
         shapeRenderer = new ShapeRenderer();
         dialogManager = new DialogManager();
     }
 
     @Override
     public void render() {
-        // 1. Logica di Gioco (Update)
-        inputHandler.update();
+        // 1. Prendiamo il tempo reale passato dall'ultimo frame e lo mettiamo nel sacco
+        float frameTime = Gdx.graphics.getDeltaTime();
+        
+        // Cap (limite): evitiamo la "spirale della morte" se il PC lagga di brutto
+        if (frameTime > 0.25f) frameTime = 0.25f; { accumulator += frameTime; }
 
-        // Passa input e ostacoli al player per aggiornare posizione e animazione
-        player.update(Gdx.graphics.getDeltaTime(), inputHandler, mapManager.getWorldObjects());
+        while (accumulator >= TIME_STEP) {
+            // --- LOGICA DI GIOCO FISSA (60Hz) ---
+            inputHandler.update();
+            player.update(TIME_STEP, inputHandler, mapManager.getWorldObjects());
 
-        // Gestione dell'interazione quando il tasto è appena stato premuto
-        if (inputHandler.isInteractJustPressed()) {
-            Rectangle iRange = player.getInteractionRange();
-            boolean oggettoTrovato = false;
-            
-            for (WorldObject obj : mapManager.getWorldObjects()) {
-                if (iRange.overlaps(obj.bounds)) {
-                    oggettoTrovato = true;
-
-                    if ("cassa".equals(obj.type)) {
-                        dialogManager.showMessage("Hai aperto una cassa!", 3f);
+            // GESTIONE INTERAZIONE (Spostata qui dentro!)
+            if (inputHandler.isInteractJustPressed()) {
+                Rectangle iRange = player.getInteractionRange();
+                boolean oggettoTrovato = false;
+                
+                for (WorldObject obj : mapManager.getWorldObjects()) {
+                    if (iRange.overlaps(obj.bounds)) {
+                        oggettoTrovato = true;
+                        if ("cassa".equals(obj.type)) {
+                            dialogManager.showMessage("Hai aperto una cassa!", 3f);
+                        } else if ("cartello".equals(obj.type)) {
+                            dialogManager.showMessage(obj.customMessage, 4f);
+                        }
+                        break;
                     }
-                    else if ("cartello".equals(obj.type)) {
-                        // Leggiamo la proprietà personalizzata "testo" che abbiamo messo in Tiled
-                        // Nota: dobbiamo aver salvato le proprietà nel WorldObject
-                        dialogManager.showMessage(obj.customMessage, 4f);
-                    }
-                    break; // Fermati al primo oggetto trovato
+                }
+                if (!oggettoTrovato) {
+                    dialogManager.showMessage("Non c'è nulla con cui interagire.", 2f);
                 }
             }
-
-            // Se dopo aver controllato tutti gli oggetti non ne abbiamo trovato nessuno...
-            if (!oggettoTrovato) {
-                dialogManager.showMessage("Non c'è nulla con cui interagire.", 2f);
-            }
+            
+            accumulator -= TIME_STEP;
         }
 
         // Aggiorna il dialogo (per gestire il timer di visualizzazione)
@@ -105,10 +116,9 @@ public class MysticRPG extends ApplicationAdapter {
         shapeRenderer.setColor(Color.GREEN);
         float collisionWidth = player.getWidth() * 0.4f;
         float collisionHeight = player.getHeight() * 0.2f;
-        float yOffset = 27f; // Lo stesso valore usato nel Player
         shapeRenderer.rect(
             player.getPosition().x + (player.getWidth() - collisionWidth) / 2, 
-            player.getPosition().y + yOffset, 
+            player.getPosition().y, 
             collisionWidth, 
             collisionHeight
         );
